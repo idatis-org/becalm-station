@@ -1,9 +1,10 @@
-# This is becalmbroker v1.0
-# Released under
+# This file is part of becalm-station
+# https://github.com/idatis-org/becalm-station
 # Copyright: Copyright (C) 2020 Enrique Melero <enrique.melero@gmail.com>
-# License: GPL-3
-# The full text of the GPL is distributed as in
-#  /usr/share/common-licenses/GPL-3 on Debian systems.
+# License:   Apache License Version 2.0, January 2004
+#            The full text of the Apache License is available here
+#            http://www.apache.org/licenses/
+
 from datetime import datetime
 from flask import Flask
 from flask_restful import Resource, Api
@@ -28,7 +29,7 @@ def job1():
     if r.status_code != 200:
         print("Error reading sensor " + sensorurl)
         return
-            
+
     payload_dict = r.json()
     timestamp= datetime.now().__str__()
     payload=[]
@@ -38,12 +39,12 @@ def job1():
             'measure_value': payload_dict[key],
             'date_generation': timestamp
         }
-        payload.append(measure)        
- 
+        payload.append(measure)
+
 
 # Post results to central server
     headers = {'Content-type': 'application/json'}
-    r = requests.post('http://valora.io:8080/v100/data-sensor/2?id_device=1', headers=headers, json=payload) 
+    r = requests.post('http://valora.io:8080/v100/data-sensor/2?id_device=1', headers=headers, json=payload)
 
     if r.status_code == 201:
         print ( datetime.now().__str__() + " Posted to server")

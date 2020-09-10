@@ -1,7 +1,15 @@
+/*
+# This file is part of becalm-station
+# https://github.com/idatis-org/becalm-station
+# Copyright: Copyright (C) 2020 Enrique Melero <enrique.melero@gmail.com>
+# License:   Apache License Version 2.0, January 2004
+#            The full text of the Apache License is available here
+#            http://www.apache.org/licenses/
+*/
 <template>
 <div>
   <div class="sensor"  >
-    Sensor type:{{ type }} Status:{{ status }} 
+    Sensor type:{{ type }} Status:{{ status }}
     <img src="./assets/playpause.jpeg" width=20px v-on:click="paused ^= 1; updateStatus();"/>
       <p/>
        <div class="meassure" v-for="item in sensordata" :key="item.measure">
@@ -9,9 +17,9 @@
       </div>
   </div>
   <CChartLine
-    v-bind:datasets="cdata"    
+    v-bind:datasets="cdata"
     v-bind:options="coptions"
-    
+
   />
 </div>
 </template>
@@ -26,7 +34,7 @@ export default {
     endpoint: String
   },
   data: () => {
-    return { 
+    return {
       status: "",
       sensordata: {} ,
       chartlen: 250,
@@ -35,14 +43,14 @@ export default {
       yWide: 0.01,
 
       cdata: [
-        { data:[], 
+        { data:[],
           label: '' ,
-          fill: true,    
+          fill: true,
           pointRadius: 0,
           tension: 0,
-          cubicInterpolationMode: 'middle', 
+          cubicInterpolationMode: 'middle',
           backgroundColor: "#FFA0A0",
-          
+
         },
       ],
       coptions: {
@@ -67,8 +75,8 @@ export default {
                 },
               display: true,
               drawTicks: false,
-                
-            }], 
+
+            }],
             xAxes: [{
               display: false,
               drawTicks: false,
@@ -77,7 +85,7 @@ export default {
       }
     };
   },
-  mounted() {    
+  mounted() {
     this.track(this.trackmeasure)
     this.updateStatus();
 
@@ -92,27 +100,27 @@ export default {
             //console.log(measure) ;
             //console.log(res.data[measure]) ;
             measures.push( { 'measure': measure, 'value' : res.data[measure]} )
-            if (measure == this.trackmeasure ) { 
-              
+            if (measure == this.trackmeasure ) {
+
               // IF this is a reset or every 100 points
-              if (this.cdata[0].data.length % 100 == 0 ) {                 
+              if (this.cdata[0].data.length % 100 == 0 ) {
                 this.coptions.scales.yAxes[0].ticks.suggestedMin= (1-this.yWide) * res.data[measure] ;
                 this.coptions.scales.yAxes[0].ticks.suggestedMax= (1+this.yWide) * res.data[measure] ;
                 console.log("Reset Scale") ;
-              }                           
-              
+              }
+
               // Display only this.chartLen measues
-              if (this.cdata[0].data.length > this.chartlen ) {                 
-                this.cdata[0].data.shift() 
-                } 
-              this.cdata[0].data.push(res.data[measure]) ;                            
+              if (this.cdata[0].data.length > this.chartlen ) {
+                this.cdata[0].data.shift()
+                }
+              this.cdata[0].data.push(res.data[measure]) ;
             }
           }
           this.sensordata = measures ;
           this.status = "OK " + ( (this.paused == 1) ? "Paused" : "" );
-          
+
         })
-        .catch(error => (this.status = error));      
+        .catch(error => (this.status = error));
       if (this.paused != 1 ) {
         setTimeout(() => this.updateStatus(), refreshPeriod);
       }

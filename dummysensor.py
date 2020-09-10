@@ -1,4 +1,10 @@
-#!/usr/bin/python
+# This file is part of becalm-station
+# https://github.com/idatis-org/becalm-station
+# Copyright: Copyright (C) 2020 Enrique Melero <enrique.melero@gmail.com>
+# License:   Apache License Version 2.0, January 2004
+#            The full text of the Apache License is available here
+#            http://www.apache.org/licenses/
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 import json
@@ -36,4 +42,3 @@ def debug():
 if __name__ == '__main__':
     app.debug = True
     app.run(host='0.0.0.0', port=8887)
-

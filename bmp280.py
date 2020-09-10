@@ -1,4 +1,11 @@
-# -*- coding: utf-8 -*- 
+# This file is part of becalm-station
+# https://github.com/idatis-org/becalm-station
+# Copyright: Copyright (C) 2020 Enrique Melero <enrique.melero@gmail.com>
+# License:   Apache License Version 2.0, January 2004
+#            The full text of the Apache License is available here
+#            http://www.apache.org/licenses/
+
+# -*- coding: utf-8 -*-
 
 from flask import Flask, jsonify
 from flask_cors import CORS
