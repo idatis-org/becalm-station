@@ -13,8 +13,18 @@ import requests
 import json
 from flask_apscheduler import APScheduler
 
-sensorurl="http://becalm02:8888/"
-sensorurl2="http://localhost:8887"
+# The Server hostname and port where we can contact the becalm server service
+serverAddr="localhost"
+serverPort="8080"
+
+# The becalm Station hostname and port where the sensor drivers are running
+sensorAddr="localhost"
+sensorPort="8887"
+
+# URL or the becalm Server to post the results
+# There is normally no need to change this
+serverurl="http://" + serverAddr + ":" + serverPort + "/v100/data-sensor/2?id_device=1"
+sensorurl="http://" + sensorAddr + ":" + sensorPort + "/"
 
 scheduler = APScheduler()
 
@@ -44,7 +54,7 @@ def job1():
 
 # Post results to central server
     headers = {'Content-type': 'application/json'}
-    r = requests.post('http://valora.io:8080/v100/data-sensor/2?id_device=1', headers=headers, json=payload)
+    r = requests.post(serverurl, headers=headers, json=payload)
 
     if r.status_code == 201:
         print ( datetime.now().__str__() + " Posted to server")

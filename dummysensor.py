@@ -32,7 +32,7 @@ def get_val2():
     return str(sensor.read_SpO2() )
 
 
-@app.route('/debug', methods=['GET'])
+@app.route('/', methods=['GET'])
 def debug():
     max30100= dict()
     max30100['h'] = sensor.read_heartbeat()
