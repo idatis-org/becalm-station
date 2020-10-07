@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # This file is part of becalm-station
 # https://github.com/idatis-org/becalm-station
 # Copyright: Copyright (C) 2020 Enrique Melero <enrique.melero@gmail.com>
@@ -15,7 +16,7 @@ from flask_apscheduler import APScheduler
 
 # The Server hostname and port where we can contact the becalm server service
 serverAddr="localhost"
-serverPort="8080"
+serverPort="4000"
 
 # The becalm Station hostname and port where the sensor drivers are running
 sensorAddr="localhost"
@@ -59,8 +60,7 @@ def job1():
     if r.status_code == 201:
         print ( datetime.now().__str__() + " Posted to server")
     else:
-        print ("Error posting to server: " + str(r.status_code))
-
+        print ("Error posting to server: " + str(r.status_code) + "\n" + json.dumps( payload ))
 
 app = Flask(__name__)
 

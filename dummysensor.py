@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # This file is part of becalm-station
 # https://github.com/idatis-org/becalm-station
 # Copyright: Copyright (C) 2020 Enrique Melero <enrique.melero@gmail.com>
