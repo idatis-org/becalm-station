@@ -13,6 +13,10 @@ from flask_cors import CORS
 import requests
 import json
 from flask_apscheduler import APScheduler
+import pytz
+
+# Change this to fit your timezone
+timezone="Europe/Madrid"
 
 # The Server hostname and port where we can contact the becalm server service
 serverAddr="localhost"
@@ -29,6 +33,7 @@ sensorurl="http://" + sensorAddr + ":" + sensorPort + "/"
 
 scheduler = APScheduler()
 
+tz = pytz.timezone(timezone)
 
 @scheduler.task('interval', id='do_job_1', seconds=5, misfire_grace_time=10)
 def job1():
@@ -42,7 +47,7 @@ def job1():
         return
 
     payload_dict = r.json()
-    timestamp= datetime.now().__str__()
+    timestamp= datetime.now(tz).__str__()
     payload=[]
     for key in payload_dict.keys():
         measure={
@@ -58,7 +63,7 @@ def job1():
     r = requests.post(serverurl, headers=headers, json=payload)
 
     if r.status_code == 201:
-        print ( datetime.now().__str__() + " Posted to server")
+        print ( datetime.now().__str__() + " Posted to server" + "\n" + json.dumps( payload ))
     else:
         print ("Error posting to server: " + str(r.status_code) + "\n" + json.dumps( payload ))
 
