@@ -27,35 +27,45 @@ Download the software:
 `
   git clone https://github.com/idatis-org/becalm-station.git
 `
-Install Python3 if it is not installed and some required modules:
-      `sudo apt-get update`
-      `sudo apt-get upgrade`
-      `sudo apt-get install python3`
-      `sudo apt-get install python3-pip`
-
+Install Python3 if it is not installed and some required modules
+```
+      sudo apt-get update
+      sudo apt-get upgrade
+      sudo apt-get install python3
+      sudo apt-get install python3-pip
+```
 Install required Python modules:
-      `pip3 install flask`
-      `pip3 install flask_cors`
-      `pip3 install flask_resful`
-      `pip3 install flask_restful`
-      `pip3 install flask_apscheduler`
+```
+      pip3 install flask
+      pip3 install flask_cors
+      pip3 install flask_resful
+      pip3 install flask_restful
+      pip3 install flask_apscheduler
+```
 
 ### Running the Becalm Station software
-The becalm Station requires a running Becalm Server to which it will send the data that it collects.
+The becalm Station requires a running Becalm Server to which it will send the data that it collects. You can as well use the Idatis hosted becalm server. For that you will have to request idatis at becalm@idatis.org, the provisioning of your device(s) and you will receive the IDs that can be used to post data to the Idatis becalm server (becalm.idatis.org port 4000)
+
 The address and port of the server running the Becalm Server has to be provided in the broker.py file, open it with a text editor to modify the following lines to match your configuration:
 
-`# The Server hostname and port where we can contact the becalm server service`
-`serverAddr="localhost"`
-`serverPort="8080"`
+```
+# The Server hostname and port where we can contact the becalm server service
+# You can use the Idatis becalm server to store and to inspect your measures in real time
+# Send a mail to becalm@idatis.org to request provisioning of new devices, they will send you an ID
+# that can be used to post to the Idatis' hosted Becalm server
+serverAddr="idatis.valora.io"
+serverPort="4000"
+sensorId='1'
+```
 
 
 Once this is done you can start the sensor driver (here we will run the dummy sensor)
 
-`
-      python3 dummysensor.py
-`
+```
+      ./dummysensor.py
+```
 
 And finally start the broker, that takes measures from the sensors and sends them to the Becalm Server:
-`
-      python3 broker.py
-`
+```
+      ./broker.py
+```
