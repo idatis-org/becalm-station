@@ -46,11 +46,11 @@ def job1():
     if pressureh==-1:
         pressureh=tmpPressure
 
-    # Inspira
+    # Have we switched to inspire cycle?
     if tmpPressure < (pressureh+pressurel)/2:
-        # Cambiamos a Inspirar
-        # podemos medir el ritmo respiratorio
-        # y debemos guardar la amplitud respiratoria
+        # Yes this is below the mid pression range
+        # we can measure the breathing patterm (rate)
+        # and we store the pression range between max and min
         if tmpPhase == 'E' :
             rr=60 / ( datetime.now() - linspiration ).total_seconds()
             lbreath=str(datetime.now()).split(".")[0]
@@ -62,10 +62,10 @@ def job1():
 
         tmpPhase="I"
 
-    # Expira
+    # Have we switched to expire cycle?
     if tmpPressure > (pressureh+pressurel)/2:
-        # Cambiamos a Expirar
-        # podemos medir el ritmo respiratorio
+        # We wsitch to expire
+        # and we measure the breathing rate
         if tmpPhase == 'I'  :
             lbreath=datetime.now()
             ra=pressureh-pressurel
@@ -89,37 +89,37 @@ job = scheduler.add_job(job1, 'interval', seconds=0.5)
 
 @app.route('/', methods=['GET'])
 def data():
-    # ('t', 'Temperatura', '°C', 36, 40, 30, 50, 1),
-    # ('p', 'Presión aire máscara', 'Pa', 100700, 101400, 100500, 101500, 1),
-    # ('c', 'Concentración CO2 máscara', 'ppm', 110, 190, 100, 200, 0),
-    # ('h', 'Frecuencia cardíaca', 'latidos/min', 110, 190, 100, 200, 0),
-    # ('o', 'Sp02 - Saturación de oxígeno en sangre', '?', 110, 185, 100, 200, 0),
-    # ('a', 'Amplitud respiratoria', 'Pa', 110, 185, 100, 200, 0),
-    # ('b', 'Frecuencia respiratoria', 'respiraciones/minuto', 110, 185, 100, 200, 0),
+    # ('t', 'Temperature', '°C', 36, 40, 30, 50, 1),
+    # ('p', 'Pressure in the mask', 'Pa', 100700, 101400, 100500, 101500, 1),
+    # ('c', 'CO2 concentration', 'ppm', 110, 190, 100, 200, 0),
+    # ('h', 'Heartbeat rate', 'beats/min', 110, 190, 100, 200, 0),
+    # ('o', 'Sp02 - Oxygen saturation in blood', '?', 110, 185, 100, 200, 0),
+    # ('a', 'Breath range', 'Pa', 110, 185, 100, 200, 0),
+    # ('b', 'Breathing rate', 'respiraciones/minuto', 110, 185, 100, 200, 0),
     # ('q', 'PEEP', 'Pa', 110, 185, 100, 200, 0);
     output = dict()
     output['t'] = round(temperature,2)
     output['p'] = round(lpressure,2)
     output['a'] = round(ra, 2)
-    #   output['Presión Expiración'] = round(pressureh,2)
+    #   output['Expire pressure'] = round(pressureh,2)
     output['q'] = round(pressurel,2)
     output['b'] = round(rr,2)
-    #    output['Última Respiración'] = str(lbreath)
-    #    output['Fase Respiratoria'] = tmpPhase
+    #    output['Last breath'] = str(lbreath)
+    #    output['Breathing phase'] = tmpPhase
     return(output)
 
 
 @app.route('/debug', methods=['GET'])
 def debug():
     output = dict()
-    output['Temperatura'] = round(temperature,2)
-    output['Presión'] = round(lpressure,2)
-    output['Amplitud Respiratoria'] = round(ra, 2)
-    output['Presión Expiración'] = round(pressureh,2)
-    output['Presión Inspiracón'] = round(pressurel,2)
-    output['Frecuencia Respiratoria'] = round(rr,2)
-    output['Ultima Respiración'] = str(lbreath)
-    output['Fase Respiratoria'] = tmpPhase
+    output['Temperature'] = round(temperature,2)
+    output['Pressure'] = round(lpressure,2)
+    output['Breath range'] = round(ra, 2)
+    output['Expire pressure'] = round(pressureh,2)
+    output['Inspire pressure'] = round(pressurel,2)
+    output['Breathing rate'] = round(rr,2)
+    output['Last breath'] = str(lbreath)
+    output['Breathing phase'] = tmpPhase
     return(output)
 
 if __name__ == '__main__':
