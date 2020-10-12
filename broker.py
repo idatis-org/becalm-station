@@ -19,7 +19,7 @@ import pytz
 timezone="Europe/Madrid"
 
 # The Server hostname and port where we can contact the becalm server service
-serverAddr="localhost"
+serverAddr="becalm.valora.io"
 serverPort="4000"
 
 # The becalm Station hostname and port where the sensor drivers are running
