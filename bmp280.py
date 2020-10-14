@@ -1,4 +1,6 @@
+#!/usr/bin/python3
 # This file is part of becalm-station
+
 # https://github.com/idatis-org/becalm-station
 # Copyright: Copyright (C) 2020 Enrique Melero <enrique.melero@gmail.com>
 # License:   Apache License Version 2.0, January 2004
@@ -7,7 +9,7 @@
 
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify,send_from_directory, make_response 
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -16,12 +18,17 @@ import board
 import busio
 import adafruit_bmp280
 import json
+import sqlite3 as sl
+import os
 
-app = Flask(__name__)
+# Some configurable variables
+dbfile="becalm-station.db"
+
+
+app = Flask(__name__, static_url_path='')
 
 scheduler = BackgroundScheduler()
 scheduler.start()
-
 
 temperature = -1
 pressureh = -1
@@ -33,11 +40,12 @@ linspiration=lbreath
 rr = -1
 ra = -1
 tmpPhase=""
+rtresh=0.1
 
 def job1():
 
     global linspiration, lpressure, pressureh, pressurel,temperature, rr, lbreath, tmpPhase, ra
-
+    tmpLapse=datetime.now() 
     temperature=bmp280.temperature
     tmpPressure=bmp280.pressure
     lastBreath=datetime.now()
@@ -47,7 +55,7 @@ def job1():
         pressureh=tmpPressure
 
     # Have we switched to inspire cycle?
-    if tmpPressure < (pressureh+pressurel)/2:
+    if tmpPressure < (pressureh+pressurel)/2 - rtresh :
         # Yes this is below the mid pression range
         # we can measure the breathing patterm (rate)
         # and we store the pression range between max and min
@@ -57,35 +65,58 @@ def job1():
             ra=pressureh-pressurel
             linspiration=datetime.now()
 
-        if tmpPressure < pressurel:
-            pressurel = tmpPressure
-
+        # We are inspiring
         tmpPhase="I"
 
     # Have we switched to expire cycle?
-    if tmpPressure > (pressureh+pressurel)/2:
-        # We wsitch to expire
-        # and we measure the breathing rate
-        if tmpPhase == 'I'  :
+    if tmpPressure > (pressureh+pressurel)/2 +rtresh :
+
+        # If we were inspiring before
+        # We measure the breathing rate
+        # and the respiratory amplitude
+        if tmpPhase == 'I' :   
+
             lbreath=datetime.now()
             ra=pressureh-pressurel
+            tmpPhase="E"
+    
+    if tmpPhase=="E" :
+        # measure pressure of expiration
+        pressureh=tmpPressure
 
-            pressureh = (pressureh+pressurel)/2
-
-        if tmpPressure > pressureh:
-            pressureh=tmpPressure
-
-        tmpPhase="E"
+    if tmpPhase=="I" :
+        # 
+        pressurel=tmpPressure
 
     lpressure = tmpPressure
     lastmeasure = datetime.now()
+    
+    # Initalize database
+    con = sl.connect(dbfile)
+    con.execute('''PRAGMA synchronous = OFF''') 
+    sql = 'INSERT INTO measure (type, value ) values(?, ?)'
+    data = [
+            ('t',temperature),
+            ('p',lpressure),
+            ('a',ra),
+            ('q',pressurel),
+            ('b',rr) 
+            ]
+    with con:
+            con.executemany(sql, data)
+            con.commit()
+
+    print("Pressure:" + str(lpressure) + " bmp280 read lapse:" + str( ( lastmeasure - tmpLapse).total_seconds() ) )
 
 # Create library object using our Bus I2C port
 i2c = busio.I2C(board.SCL, board.SDA)
 bmp280 = adafruit_bmp280.Adafruit_BMP280_I2C(i2c, address=0x76)
 bmp280.sea_level_pressure = 1013.25
 
-job = scheduler.add_job(job1, 'interval', seconds=0.5)
+# Initalize database
+#con = sl.connect('becalm-station.db')
+
+job = scheduler.add_job(job1, 'interval', seconds=0.3)
 
 @app.route('/', methods=['GET'])
 def data():
@@ -120,10 +151,18 @@ def debug():
     output['Breathing rate'] = round(rr,2)
     output['Last breath'] = str(lbreath)
     output['Breathing phase'] = tmpPhase
-    return(output)
+    response=make_response(output,200)
+    response.headers["Refresh"]=0.3
+    return response
+
+
+@app.route('/db', methods=['GET'])
+def db():
+    return send_from_directory(os.getcwd(),dbfile)
+    
 
 if __name__ == '__main__':
 
-    app.debug = True
+    # app.debug = True
     cors = CORS(app, resources={r"/*": {"origins": "*"}})
-    app.run(host='0.0.0.0', port=8888)
+    app.run(host='0.0.0.0', port=8888, threaded=False, processes=1 )
