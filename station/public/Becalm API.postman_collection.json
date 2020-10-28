@@ -1,0 +1,101 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Becalm API",
+		"_postman_id": "d71540dc-a32c-98d9-4e4f-c849e85ad1da",
+		"description": "Becalm API to manage health data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post sensor data for a patient",
+			"request": {
+				"url": {
+					"raw": "{{base_url}}/data-sensor/2?id_device=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"data-sensor",
+						"2"
+					],
+					"query": [
+						{
+							"key": "id_device",
+							"value": "1"
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"measure_type\": \"t\",\n        \"measure_value\": 37.49,\n        \"date_generation\": \"2020-06-04T12:53:36\"\n    },\n    {\n        \"measure_type\": \"t\",\n        \"measure_value\": 37.50,\n        \"date_generation\": \"2020-06-04T12:58:37\"\n    }\n]"
+				},
+				"description": "Post a bunch of data coming from sensors, the route id is the patient"
+			},
+			"response": []
+		},
+		{
+			"name": "Get sensor data for a patient",
+			"request": {
+				"url": {
+					"raw": "{{base_url}}/data-sensor/2?start_date=2020-04-08 00:00:00&end_date=2020-04-09 23:59:59",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"data-sensor",
+						"2"
+					],
+					"query": [
+						{
+							"key": "start_date",
+							"value": "2020-04-08 00:00:00",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "end_date",
+							"value": "2020-04-09 23:59:59",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"measure_type\": \"t\",\n        \"measure_value\": 37.49,\n        \"date_generation\": \"2020-06-04T12:53:36\"\n    },\n    {\n        \"measure_type\": \"t\",\n        \"measure_value\": 37.50,\n        \"date_generation\": \"2020-06-04T12:58:37\"\n    }\n]"
+				},
+				"description": "Post a bunch of data coming from sensors, the route number is the patient id"
+			},
+			"response": []
+		},
+		{
+			"name": "Station Debug",
+			"request": {
+				"url": "{{station_url}}/rest/api/v1.0/debug",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Request debug from the Station Broker. Should deliver info for all connected sensors to the station plus a number of other goodies"
+			},
+			"response": []
+		},
+		{
+			"name": "Sensor Debug",
+			"request": {
+				"url": "{{sensor_url}}/debug",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Delivers debug information for a given sensor "
+			},
+			"response": []
+		}
+	]
+}
