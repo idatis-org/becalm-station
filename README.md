@@ -53,7 +53,7 @@ The address and port of the server running the Becalm Server has to be provided 
 # You can use the Idatis becalm server to store and to inspect your measures in real time
 # Send a mail to becalm@idatis.org to request provisioning of new devices, they will send you an ID
 # that can be used to post to the Idatis' hosted Becalm server
-serverAddr="becalm.idatis.org"
+serverAddr="becalm.idatis.net"
 serverPort="4000"
 sensorId='1'
 ```
