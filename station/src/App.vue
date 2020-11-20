@@ -4,13 +4,13 @@
 # Copyright: Copyright (C) 2020 Enrique Melero <enrique.melero@gmail.com>
 # License:   Apache License Version 2.0, January 2004
 #            The full text of the Apache License is available here
-#            http://www.apache.org/licenses/ 
+#            http://www.apache.org/licenses/
 */
 <template>
   <div id="app">
     <img alt="Vue logo" class="center" src="./assets/logo.png" />
     <HelloWorld msg="Welcome to Becalm v0.1" />
-    <Sensor type="BMP280" endpoint="http://becalm02:8888/debug" />
+    <Sensor type="BMP280" endpoint="http://localhost:8889/debug" />
 
   </div>
 </template>
