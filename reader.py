@@ -19,6 +19,7 @@ def create_values(t):
         read_values[count] = {"ir": ir, "red": red}
         count += 1
     print("remove finger")
+    print(count)
     return read_values
 
 def filtered_output(x, prev_w, alpha):
@@ -38,35 +39,9 @@ def dcremoval(values, start_w, alpha):
         filtered_values[item] = {"ir": y_ir, "r": y_r}
     return filtered_values
 
-def meanDiff(M, filtered_values):
-    index = 0
-    sum = 0
-    count = 0
-    average = 0
-
-    sum -= filtered_values[index]["ir"]
-    filtered[index]["ir"] = M
-    sum += filtered_values[index]["ir"]
-    index += 1
-    index = index % mean_filter_size
-
-    if count < mean_filter_size:
-        count += 1
-
-    avg = sum / count
-    return avg - M
-
-def butterworthFilter(x, filtered_values):
-    pass
-
-def beat_detect()
-
-
-
-
 values = create_values(10)
 dc_result = dcremoval(values, 20000, 0.95)
-meandiff_result = meanDiff(0, dc_result)
+
 
 
         
