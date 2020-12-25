@@ -2,6 +2,7 @@ from max30100 import *
 import time
 import json
 from datetime import datetime
+import matplotlip.pyplot as plt
 
 mx30 = MAX30100()
 
@@ -39,6 +40,20 @@ def dcremoval(values, start_w, alpha):
         w_r,y_r = temp_r
         filtered_values[item] = {"ir": y_ir, "r": y_r, "timestamp": timestamp}
     return filtered_values
+
+def plot(values):
+    arr_ir = []
+    arr_r = []
+    timestamps = []
+    
+    for item in dict:
+        arr_ir.append(dict[item]["ir"])
+        arr_r.append(dict[item]["r"])
+        timestamps.append(dict[item]["timestamp"])
+
+    plt.plot(timestamps, arr_ir)
+    plt.plot(timestamps, arr_r)
+
 
 values = create_values(10)
 dc_result = dcremoval(values, 20000, 0.95)
