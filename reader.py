@@ -1,6 +1,7 @@
 from max30100 import *
 import time
 import json
+from datetime import datetime
 
 mx30 = MAX30100()
 
@@ -16,10 +17,9 @@ def create_values(t):
         mx30.read_sensor()
         ir = mx30.ir
         red = mx30.red
-        read_values[count] = {"ir": ir, "red": red}
+        read_values[count] = {"ir": ir, "red": red, "timestamp": datetime.now()}
         count += 1
     print("remove finger")
-    print(count)
     return read_values
 
 def filtered_output(x, prev_w, alpha):
@@ -34,13 +34,15 @@ def dcremoval(values, start_w, alpha):
     for item in values:
         temp_ir = filtered_output(values[item]["ir"], w_ir, alpha)
         temp_r = filtered_output(values[item]["red"], w_r, alpha)
+        timestamp = values[item]["timestamp"]
         w_ir,y_ir = temp_ir
         w_r,y_r = temp_r
-        filtered_values[item] = {"ir": y_ir, "r": y_r}
+        filtered_values[item] = {"ir": y_ir, "r": y_r, "timestamp": timestamp}
     return filtered_values
 
 values = create_values(10)
 dc_result = dcremoval(values, 20000, 0.95)
+print(dc_result)
 
 
 
