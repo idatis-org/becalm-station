@@ -14,12 +14,16 @@ def create_values(t):
     read_values = {}
     t1 = time.time()
     count = 0
+    warmup = 100
     while (time.time()-t1) < t:
         mx30.read_sensor()
         ir = mx30.ir
         red = mx30.red
-        read_values[count] = {"ir": ir, "red": red, "timestamp": time.time()}
-        count += 1
+        warmup = warmup -1 
+        if warmup <0: 
+            read_values[count] = {"ir": ir, "red": red, "timestamp": time.time()}
+            count += 1
+        
 #    print("remove finger")
     return read_values
 
@@ -38,7 +42,8 @@ def dcremoval(values, start_w, alpha):
         timestamp = values[item]["timestamp"]
         w_ir,y_ir = temp_ir
         w_r,y_r = temp_r
-        filtered_values.append( {"ir": y_ir, "r": y_r, "timestamp": timestamp} )
+        if abs(y_ir) +abs(y_r) < 100:
+            filtered_values.append( {"ir": y_ir, "r": y_r, "timestamp": timestamp} )
     return filtered_values
 
 def plot(values):
